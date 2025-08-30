@@ -1,9 +1,6 @@
 # Ansible - Kubespray
 
-Kubespray is Ansible based tool, we can tune the playbooks based on our project requirement.
-
-
-For Kubernetes deployment using Ansible,  recommend  using **Kubespray**:
+Kubespray is Ansible based tool, we can tune the playbooks/roles based on our project requirement.
 
 👉 [Kubespray GitHub Repository](https://github.com/kubernetes-sigs/kubespray)
 

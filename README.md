@@ -6,7 +6,8 @@
 <img width="2812" height="1986" alt="System Arch-2" src="https://github.com/user-attachments/assets/fd46a237-a67a-4f05-aaa5-8c242a8982ff" />
 
 
-Tools Used:
+Tools Used for this presentation:
+
 Kubespray - Ansible 
 Eraser for Arch diagram generation
 Draw.io

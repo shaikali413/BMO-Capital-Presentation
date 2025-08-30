@@ -9,5 +9,7 @@ For Kubernetes deployment using Ansible,  recommend  using **Kubespray**:
 
 Kubespray provides Ansible playbooks for deploying production-ready Kubernetes clusters.
 
+![Uploading image.png…]()
+
 [![RedHat - An introduction to Kubespray - Sample Cluster setup]()](https://www.redhat.com/en/blog/kubespray-deploy-kubernetes)
 

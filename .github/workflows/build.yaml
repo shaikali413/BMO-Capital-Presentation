@@ -1,0 +1,6 @@
+name: Build and Deploy Backend Service
+
+on:
+  push:
+    branches:
+      - main

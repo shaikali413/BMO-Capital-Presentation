@@ -1,4 +1,4 @@
-# Ansible - Kubespray
+# Kubespray(Ansible supported)
 
 Kubespray is Ansible based tool, we can tune the playbooks/roles based on our project requirement.
 

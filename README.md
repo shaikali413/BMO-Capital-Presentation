@@ -41,9 +41,9 @@ Sentinel / OPA (Open Policy Agent) – Policy enforcement and governance
 Grafana / Prometheus – Metrics and dashboarding
 
 DataDog – Cloud monitoring and security
+ELK Stack – Centralized logging (Elasticsearch, Logstash, Kibana) <br><br>
 
-ELK Stack – Centralized logging (Elasticsearch, Logstash, Kibana)
-<br><br>
+
 ---------------------------------------------------------------------
 **Hot-Standby Cluster Architecture for Production-Grade Kubernetes**
 ---------------------------------------------------------------------

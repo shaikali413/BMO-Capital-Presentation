@@ -1,6 +1,47 @@
 # BMO-Capital-Presentation
 
 
+**Tools & Topics Covered**
+**Kubernetes Operations**
+
+Kubespray – Ansible-based framework for provisioning and managing Kubernetes clusters
+
+**Kubernetes Cluster Backup**
+
+Velero – Backup and restore for Kubernetes clusters
+
+**GitOps**
+
+Argo CD & Flux CD – GitOps deployment tools
+
+GitHub Actions – CI/CD automation
+
+**Security**
+
+SOPS with GPG Keys – Secure secrets management
+
+Vault (HashiCorp / Azure Key Vault / Delinea) – Secrets storage
+
+Cert-Manager – Automated TLS certificate management
+
+Trivy / Clair – Container image vulnerability scanning
+
+SonarQube – Static code analysis and security
+
+**Governance**
+
+Kyverno – Kubernetes policy engine
+
+Sentinel / OPA (Open Policy Agent) – Policy enforcement and governance
+
+**Monitoring & Observability**
+
+Grafana / Prometheus – Metrics and dashboarding
+
+DataDog – Cloud monitoring and security
+
+ELK Stack – Centralized logging (Elasticsearch, Logstash, Kibana)
+
 
 **Hot-Standby Cluster Architecture for Production-Grade Kubernetes**
 

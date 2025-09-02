@@ -2,6 +2,8 @@
 
 
 **Tools & Topics Covered**
+---------------------------
+
 **Kubernetes Operations**
 
 Kubespray – Ansible-based framework for provisioning and managing Kubernetes clusters

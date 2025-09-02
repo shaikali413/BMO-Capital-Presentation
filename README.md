@@ -4,21 +4,21 @@
 **Tools & Topics Covered**
 ---------------------------
 
-**Kubernetes Operations**
+**Kubernetes Operations**:
 
 Kubespray – Ansible-based framework for provisioning and managing Kubernetes clusters
 
-**Kubernetes Cluster Backup**
+**Kubernetes Cluster Backup**:
 
 Velero – Backup and restore for Kubernetes clusters
 
-**GitOps**
+**GitOps**:
 
 Argo CD & Flux CD – GitOps deployment tools
 
 GitHub Actions – CI/CD automation
 
-**Security**
+**Security**:
 
 SOPS with GPG Keys – Secure secrets management
 
@@ -30,25 +30,23 @@ Trivy / Clair – Container image vulnerability scanning
 
 SonarQube – Static code analysis and security
 
-**Governance**
+**Governance**:
 
 Kyverno – Kubernetes policy engine
 
 Sentinel / OPA (Open Policy Agent) – Policy enforcement and governance
 
-**Monitoring & Observability**
+**Monitoring & Observability**:
 
 Grafana / Prometheus – Metrics and dashboarding
 
 DataDog – Cloud monitoring and security
 
 ELK Stack – Centralized logging (Elasticsearch, Logstash, Kibana)
-
-
-
-
+<br><br>
+---------------------------------------------------------------------
 **Hot-Standby Cluster Architecture for Production-Grade Kubernetes**
-
+---------------------------------------------------------------------
 
 
 <img width="2263" height="2113" alt="System Diagram" src="https://github.com/user-attachments/assets/24a12fed-2584-463b-b766-97387bba2a3a" />

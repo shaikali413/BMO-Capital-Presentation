@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: secret
+metadata:
+  name: github-repo
+  namespace: argocd
+stringdata:
+  url: git@github.com:test/bmo.git
+  type: git
+  sshPrivateKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    YOUR_PRIVATE_KEY_HERE 
+    -----END OPENSSH PRIVATE KEY-----
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: bmo-git
+  namespace: argocd
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  url: git@github.com:test/bmo.git
+  secretRef:
+    name: github-repo
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bmo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:test/bmo.git
+    targetRevision: HEAD
+    path: env/cluster/hot-cluster/test-api
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: bmo-kustomize
+  namespace: bmo-app
+  annotations:
+    description: "Kustomization for BMO using SOPS decryption"
+spec:
+  interval: 1m0s
+  path: ./clusters/hot-cluster/test-api
+  targetNamespace: argocd
+  sourceRef:
+    kind: GitRepository
+    name: bmo-git
+    namespace: argocd
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg

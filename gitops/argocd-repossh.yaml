@@ -1,0 +1,15 @@
+---
+kind: secret
+metadata:
+  name: github-repo
+  namespace: argocd
+stringdata:
+  url: git@github.com:test/bmo.git
+  type: git
+  sshPrivateKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    YOUR_PRIVATE_KEY_HERE 
+    -----END OPENSSH PRIVATE KEY-----
+##Public key to be added to the github.com:test/bmo.git GitHub repo deploy keys
+##encrypt this file with sops keys
+## sops -e -i gitops/argocd-repossh.yaml >> argocd-repossh.enc.yaml

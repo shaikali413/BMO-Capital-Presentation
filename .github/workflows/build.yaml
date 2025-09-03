@@ -1,6 +1,65 @@
-name: Build and Deploy Backend Service
+name: build Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn clean package --file pom.xml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: java-app
+          path: target/*.jar
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Harbor
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.HARBOR_URL }}
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.HARBOR_URL }}/bmo/java-app:${{ github.sha }} .
+
+      - name: Scan Docker image (Trivy)
+        uses: aquasecurity/trivy-action@v0.14.0
+        with:
+          image-ref: ${{ secrets.HARBOR_URL }}/bmo/java-app:${{ github.sha }}
+
+      - name: Push Docker image to Harbor
+        run: |
+          docker push ${{ secrets.HARBOR_URL }}/bmo/java-app:${{ github.sha }}

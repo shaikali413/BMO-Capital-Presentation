@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-service
+  namespace: bmo-app
+  labels:
+    app: backend-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: backend-service
+    spec:
+      serviceAccountName: vault-auth
+      containers:
+        - name: backend-service
+          image: harbor.bmo.net/backend-service:latest
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1
+              memory: 1Gi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: VAULT_ADDR
+              value: "http://vault.bmo-app.svc:8200"
+            - name: VAULT_ROLE
+              value: "backend-role"
+            - name: SECRET_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-vault-secret
+                  key: username
+            - name: SECRET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-vault-secret
+                  key: password
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      # Add Vault Agent sidecar for secret injection
+      initContainers:
+        - name: vault-agent-init
+          image: hashicorp/vault:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              vault agent -config=/etc/vault/agent/config.hcl
+          env:
+            - name: VAULT_ADDR
+              value: "http://vault.bmo-app.svc:8200"
+            - name: VAULT_CACERT
+              value: /etc/vault/tls/vault.pem
+          volumeMounts:
+            - name: vault-agent-config
+              mountPath: /vault/agent
+            - name: backend-vault-secret
+              mountPath: /vault/secrets
+      volumes:
+        - name: vault-agent-config
+          configMap:
+            name: vault-agent-config
+        - name: backend-vault-secret
+          emptyDir: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-service-policy
+  namespace: bmo-app
+spec:
+  podSelector:
+    matchLabels:
+      app: backend-service
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend-service
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: database
+      ports:
+        - protocol: TCP
+          port: 5432
+---

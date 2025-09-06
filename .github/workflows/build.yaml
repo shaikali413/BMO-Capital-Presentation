@@ -54,12 +54,22 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.HARBOR_URL }}/bmo/java-app:${{ github.sha }} .
-
+      
+      - name: Push Docker image to Harbor
+        run: |
+          docker push ${{ secrets.HARBOR_URL }}/bmo/java-app:${{ github.sha }}
+      
       - name: Scan Docker image (Trivy)
         uses: aquasecurity/trivy-action@v0.14.0
         with:
           image-ref: ${{ secrets.HARBOR_URL }}/bmo/java-app:${{ github.sha }}
+          format: 'template'
+          template: '@contib/sarif.tpl'
+          output: 'trivy-report.sarif'
+      
+      - name: Upload Trivy report
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-report
+      
 
-      - name: Push Docker image to Harbor
-        run: |
-          docker push ${{ secrets.HARBOR_URL }}/bmo/java-app:${{ github.sha }}

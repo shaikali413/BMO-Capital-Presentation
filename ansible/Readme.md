@@ -21,10 +21,10 @@ sudo pip3.9 install ansible-lint
 sudo pip3.9 install netaddr
 
 # Install required Ansible collections
-ansible-galaxy collection install ansible.posix
-ansible-galaxy collection install kubernetes.core
-ansible-galaxy collection install ansible.netcommon
-ansible-galaxy collection install community.general
+ansible-galaxy collection install ansible.posix <br>
+ansible-galaxy collection install kubernetes.core <br>
+ansible-galaxy collection install ansible.netcommon <br>
+ansible-galaxy collection install community.general <br>
 
 # Run Ansible playbook
 ansible-playbook -i inventory/hot-cluster/hosts.yaml \
@@ -45,3 +45,4 @@ ansible-playbook -i inventory/standby-cluster/hosts.yaml \
 ansible all -i /kubespray/inventory/hot-cluster/hosts.yaml \
   -m ansible.builtin.setup \
   -a "filter='ansible_os_family'"
+

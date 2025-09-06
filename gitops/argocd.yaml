@@ -1,15 +1,40 @@
-apiVersion: argoproj.io/v1alpha1
-kind: secret
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: github-repo
-  namespace: argocd
-stringdata:
-  url: git@github.com:test/bmo.git
-  type: git
-  sshPrivateKey: |
-    -----BEGIN OPENSSH PRIVATE KEY-----
-    YOUR_PRIVATE_KEY_HERE 
-    -----END OPENSSH PRIVATE KEY-----
+  annotations:
+    argocd.argoproj.io/syn-opt: Prune=false
+    kustomize.toolkit.fluxcd.io/prune: "false"
+  name: bmo-app
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: bmo-app-role
+  namespace: bmo-app
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bmo-app-sa
+  namespace: bmo-app
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bmo-app-rolebinding
+  namespace: bmo-app
+subjects:
+  - kind: ServiceAccount
+    name: bmo-app-sa
+    namespace: bmo-app
+roleRef:
+  kind: Role
+  name: bmo-app-role
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
@@ -34,7 +59,7 @@ spec:
   source:
     repoURL: git@github.com:test/bmo.git
     targetRevision: HEAD
-    path: env/cluster/hot-cluster/test-api
+    path: test-api
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -61,4 +86,4 @@ spec:
   decryption:
     provider: sops
     secretRef:
-      name: sops-gpg
+      name: sops

@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-harbor
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: verify-image
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      verifyImages:
+      - imageReferences:
+        - "harbor.bmo.com/bmo-test/*"
+        mutateDigest: true
+        attestors:
+        - entries:
+          - keys:
+              secret:
+                name: cosign-public-key
+                key: cosign.pub
+#cosign generate-key-pair
+#after you build and push the image to harbor run the below command to sign the image
+#cosign sign --key cosign.key harbor.bmo.com/bmo-test/backend-service:latest
+#kubectl create secret generic cosign-public-key --from-file=cosign.pub --namespace bmo-app

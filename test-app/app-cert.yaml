@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bmo-app-tls-cert
+  namespace: default
+spec:
+  secretName: bmo-app-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  usage:
+   - digital signature
+   - key encipherment 
+   - server auth
+  subject:
+    org: BMO
+  commonName: bmo-app.example.com
+  dnsNames:
+  - bmo-app.example.com
+  secretTemplate:
+    labels:
+      app: bmo-app
+    annotations:
+      replicator.v1.mittwald.de/replicate-to: bmo-app
+      replicator.v1.mittwald.de/replicate-labels: "true"

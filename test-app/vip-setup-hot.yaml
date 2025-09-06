@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bmo-app-keepalived
+  namespace: bmo-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bmo-app-keepalived
+  template:
+    metadata:
+      labels:
+        app: bmo-app-keepalived
+        bmo-app-vip: "10.10.10.10"
+    spec:
+      hostNetwork: true
+      serviceAccountName: bmo-app-network-flow
+      containers:
+        - name: bmo-app-keepalived
+          image: keepalived:latest
+          securityContext:
+            privileged: true
+          env:
+            - name: VIP_ADDR
+              value: "10.10.10.10"
+            - name: VIP_IFACE
+              value: "ens192"
+            - name: VIRTUAL_ROUTER_ID
+              value: "142"
+            - name: CHECK_HAPROXY_MASTER
+              value: "true"
+            - name: CHECK_HAPROXY
+              value: "true"
+            - name: CHECK_HAPROXY_PORTPATH
+              value: "8429/haproxyhealth"
+            - name: CHECK_HAPROXY_PROTOCOL
+              value: "http"
+            - name: PRIORITY
+              value: "100"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bmo-app-haproxy
+  namespace: bmo-app
+data:
+  haproxy.cfg: |
+    global
+        log stdout format timed local0 warning
+        daemon
+
+    defaults
+        mode tcp
+        log global
+        option dontlognull
+    frontend bmo-app-health
+        mode http
+        bind *:8429
+        acl no_backends nbsrv(bmo-app-https) lt 1
+        monitor-uri /haproxyhealth
+        monitor fail if no_backends
+    #you can add more frontends and backends as needed for 80 port
+    frontend bmo-app-https 
+        bind 10.10.10.10:443
+        mode tcp
+        option tcplog
+        default_backend bmo-app-https
+
+    backend bmo-app-https
+        mode tcp
+        option httpchk GET /healthz
+        http-check expect status 200
+        balance leastconn
+        server node1 10.200.200.1:31421 check port 31422
+        server node2 10.200.200.2:31421 check port 31422
+        server node3 10.200.200.3:31421 check port 31422
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bmo-app-haproxy
+  namespace: bmo-app

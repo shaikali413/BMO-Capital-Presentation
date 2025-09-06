@@ -1,0 +1,33 @@
+all:
+  hosts:
+    hot-cluster-node1:
+      ansible_host: 10.200.200.1
+      ip: 10.200.200.1
+      access_ip: 10.200.200.1
+    hot-cluster-node2:
+      ansible_host: 10.200.200.2
+      ip: 10.200.200.2
+      access_ip: 10.200.200.2
+    hot-cluster-node3:
+      ansible_host: 10.200.200.3
+      ip: 10.200.200.3
+      access_ip: 10.200.200.3
+  children:
+    kube_control_plane:
+      hosts:
+        hot-cluster-node1:
+        hot-cluster-node2:
+        hot-cluster-node3:
+    kube_node:
+      hosts:
+        hot-cluster-node1:
+        hot-cluster-node2:
+        hot-cluster-node3:
+    etcd:
+      hosts:
+        hot-cluster-node1:
+        hot-cluster-node2:
+        hot-cluster-node3:
+    k8s_cluster:
+      children:
+        kube_control_plane:

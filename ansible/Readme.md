@@ -12,13 +12,13 @@ Kubespray provides Ansible playbooks for deploying production-ready Kubernetes c
 Pre-requisites and commands:
 
 # Install Python 3.9 (if not installed)
-sudo yum install python39
+sudo yum install python39 <br>
 
 # Install specific Ansible version and dependencies
-sudo pip3.9 install ansible-core==2.14.0
-pip3.9 install jmespath
-sudo pip3.9 install ansible-lint
-sudo pip3.9 install netaddr
+sudo pip3.9 install ansible-core==2.14.0 <br>
+pip3.9 install jmespath <br>
+sudo pip3.9 install ansible-lint <br>
+sudo pip3.9 install netaddr <br>
 
 # Install required Ansible collections
 ansible-galaxy collection install ansible.posix <br>
@@ -40,9 +40,9 @@ ansible-playbook -i inventory/standby-cluster/hosts.yaml \
   --skip-tags rhel-sub \
   -v
 
-#Example ad-hoc:
-# Run Ansible ad-hoc command to check OS family
+**# Example ad-hoc:**
 ansible all -i /kubespray/inventory/hot-cluster/hosts.yaml \
   -m ansible.builtin.setup \
   -a "filter='ansible_os_family'"
+
 

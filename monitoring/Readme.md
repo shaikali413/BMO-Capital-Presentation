@@ -14,7 +14,10 @@ kubectl apply -f kibana.yaml
 After Few Minutes check:
 
 kubectl get elasticsearch -n elastic-system
-kubectl get pods --selector='elasticsearch.k8s.elastic.co/cluster-name=quickstart'
+Kibana User id: elastic (default)
+kubectl get secret bmo-elastic-cluster-es-elastic-user -o=jsonpath='{.data.elastic}' -n elastic-system | base64 --decode; echo
+
+
 
 
 

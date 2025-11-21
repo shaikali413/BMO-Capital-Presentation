@@ -21,7 +21,7 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "Running tests..."
+          echo "Running tests...Ali"
           echo "All tests passed"
 
       - name: Create artifact
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production  # This triggers the manual approval
-      url: https://your-app.com  # Optional: URL shown in deployment
+    #  url: https://your-app.com  # Optional: URL shown in deployment
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4

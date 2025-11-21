@@ -1,0 +1,85 @@
+name: Manual Approval POC
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  # Job 1: Build/Test Phase (runs automatically)
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run build
+        run: |
+          echo "Building application..."
+          echo "Build completed successfully"
+
+      - name: Run tests
+        run: |
+          echo "Running tests..."
+          echo "All tests passed"
+
+      - name: Create artifact
+        run: |
+          echo "Creating deployment artifact..."
+          mkdir -p build
+          echo "Build artifact created at $(date)" > build/artifact.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: build/
+
+  # Job 2: Manual Approval Required (waits for approval)
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production  # This triggers the manual approval
+      url: https://your-app.com  # Optional: URL shown in deployment
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: build/
+
+      - name: Display artifact
+        run: |
+          echo "Downloaded artifact:"
+          cat build/artifact.txt
+
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          echo "Deployment started at $(date)"
+          sleep 5
+          echo "Deployment completed successfully!"
+
+      - name: Notify deployment
+        run: |
+          echo "✅ Production deployment completed"
+          echo "Environment: production"
+          echo "Deployed by: ${{ github.actor }}"
+          echo "Commit: ${{ github.sha }}"
+
+  # Job 3: Post-deployment tasks (runs after approval and deployment)
+  post-deploy:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run smoke tests
+        run: |
+          echo "Running smoke tests..."
+          echo "All smoke tests passed"
+
+      - name: Send notification
+        run: |
+          echo "Sending deployment notification..."
+          echo "Notification sent to team"
